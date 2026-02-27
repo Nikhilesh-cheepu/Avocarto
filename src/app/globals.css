@@ -1,8 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Warm cream – not pure white */
+  --background: #faf8f5;
+  --background-warm: #f5f2ed;
+  --background-tint: #f0ede8;
+  /* Foreground */
+  --foreground: #2d2926;
+  --foreground-muted: #6b6560;
+  --foreground-soft: #9c9590;
+  /* Avocado palette */
+  --avo-green: #3d6b3a;
+  --avo-green-soft: #5a8c56;
+  --avo-green-light: #9bc498;
+  --avo-green-pale: #e8f0e7;
+  --avo-gradient: linear-gradient(135deg, #e8f0e7 0%, #f0ede8 50%, #faf8f5 100%);
+  /* Pit brown – accents */
+  --avo-pit: #5c534a;
+  --avo-pit-light: #8a7f75;
+  /* Depth & surfaces */
+  --card-bg: #ffffff;
+  --card-border: rgba(45, 41, 38, 0.06);
+  --shadow-soft: 0 2px 12px rgba(45, 41, 38, 0.05);
+  --shadow-medium: 0 4px 20px rgba(45, 41, 38, 0.07);
+  --shadow-button: 0 2px 8px rgba(61, 107, 58, 0.25);
+  /* Spacing rhythm (mobile-first) */
+  --section-py-mobile: 2.5rem;
+  --section-py-desktop: 4rem;
+  --block-px: 1rem;
+  --block-px-desktop: 1.5rem;
+  /* Radii */
+  --radius: 0.875rem;
+  --radius-sm: 0.5rem;
+  --radius-pill: 9999px;
 }
 
 @theme inline {
@@ -12,15 +42,30 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Very subtle noise overlay (optional – use on hero or panels) */
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }

@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Avacarto
 
-## Getting Started
+**Avocado Is a Lifestyle.**
 
-First, run the development server:
+Pre-launch landing page and simple admin for Avacarto. Built with Next.js (App Router), TypeScript, and PostgreSQL on Railway.
+
+## Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS** for styling
+- **PostgreSQL on Railway** for `site_settings` and `subscribers`
+
+## Setup
+
+### 1. Install and run locally
 
 ```bash
+npm install
+cp .env.example .env.local
+# Edit .env.local and set DATABASE_URL (see below)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the landing page and [http://localhost:3000/admin](http://localhost:3000/admin) for the admin panel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Database (Railway Postgres)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a new project on [Railway](https://railway.app) and add a **PostgreSQL** service.
+2. Copy the `DATABASE_URL` from the service variables into `.env.local`.
+3. Run the schema once (Railway SQL console or `psql $DATABASE_URL -f schema.sql`):
 
-## Learn More
+```bash
+psql "$DATABASE_URL" -f schema.sql
+```
 
-To learn more about Next.js, take a look at the following resources:
+Or in Railway’s SQL tab, paste and run the contents of `schema.sql`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Logo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The header uses a placeholder “A” until you add your logo. To use your own:
 
-## Deploy on Vercel
+- Add `public/logo.png` (or `logo.svg`).
+- In `src/components/Header.tsx`, replace the placeholder div with `next/image` pointing to `/logo.png`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## What’s included
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Landing page**: Announcement bar, header, hero, about, First Drop (3 placeholder products), What’s Coming, email subscribe, footer. All main texts are editable from the admin.
+- **Admin** (`/admin`): Edit landing page copy and view/export subscribers (CSV). No auth in this phase; secure the admin route (e.g. auth or private URL) when needed.
+
+## Environment
+
+| Variable        | Description                          |
+|----------------|--------------------------------------|
+| `DATABASE_URL` | PostgreSQL connection string (Railway) |
+
+## Future-proofing
+
+The codebase is prepared for (not implemented):
+
+- **Phone OTP login** (e.g. `users` with `phone_number`, OTP verification).
+- **Roles** (admin / user).
+- **Full ecommerce**: products, orders, inventory.
+
+See comments in `schema.sql` for future table ideas.
+
+## Scripts
+
+- `npm run dev` – development server
+- `npm run build` – production build
+- `npm run start` – run production server
+- `npm run lint` – ESLint
