@@ -8,6 +8,7 @@ import {
   type Product,
 } from "@/lib/db";
 import { Storefront } from "@/components/shop/Storefront";
+import { hasColumn } from "@/lib/db-schema";
 
 async function getSettings(): Promise<{
   announcement_text: string;
@@ -62,10 +63,13 @@ export default async function Home() {
 async function getProducts(): Promise<Product[]> {
   try {
     const db = getDb();
+    const hasAvailableSizes = await hasColumn("products", "available_sizes");
     const result = await db.query<Product>(
       `SELECT
         p.id, p.category_id, c.slug AS category_slug, c.name AS category_name,
-        p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at
+        p.name, p.description, p.price_inr, p.image_url, ${
+          hasAvailableSizes ? "p.available_sizes" : "ARRAY[]::text[] AS available_sizes"
+        }, p.is_active, p.created_at
       FROM products p
       JOIN product_categories c ON c.id = p.category_id
       WHERE p.is_active = true

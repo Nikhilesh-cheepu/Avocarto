@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import path from "path";
-import { mkdir, writeFile } from "fs/promises";
+import { put } from "@vercel/blob";
 import { requireAdmin } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
@@ -13,6 +12,14 @@ export async function POST(request: Request) {
   if (unauthorized) return unauthorized;
 
   try {
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    if (!token) {
+      return NextResponse.json(
+        { error: "Blob token missing. Set BLOB_READ_WRITE_TOKEN and redeploy." },
+        { status: 500 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -34,19 +41,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
     const extension = getExtension(file.type);
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${extension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    const absolutePath = path.join(uploadDir, filename);
-
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(absolutePath, buffer);
+    const blob = await put(`products/${filename}`, file, {
+      access: "public",
+      token,
+      addRandomSuffix: false,
+    });
 
     return NextResponse.json({
       success: true,
-      url: `/uploads/${filename}`,
+      url: blob.url,
     });
   } catch (error) {
     console.error("POST /api/admin/upload", error);

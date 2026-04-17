@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
+import { hasColumn } from "@/lib/db-schema";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -31,14 +32,33 @@ export async function PATCH(request: Request, { params }: Params) {
           .filter((size: string) => size.length > 0)
       : [];
     const isActive = Boolean(body.is_active);
+    const hasAvailableSizes = await hasColumn("products", "available_sizes");
 
     const db = getDb();
-    await db.query(
-      `UPDATE products
-       SET category_id = $1, name = $2, description = $3, price_inr = $4, image_url = $5, available_sizes = $6, is_active = $7
-       WHERE id = $8`,
-      [categoryId, name, description, Math.round(priceInr), imageUrl, availableSizes, isActive, productId]
-    );
+    if (hasAvailableSizes) {
+      await db.query(
+        `UPDATE products
+         SET category_id = $1, name = $2, description = $3, price_inr = $4, image_url = $5, available_sizes = $6, is_active = $7
+         WHERE id = $8`,
+        [
+          categoryId,
+          name,
+          description,
+          Math.round(priceInr),
+          imageUrl,
+          availableSizes,
+          isActive,
+          productId,
+        ]
+      );
+    } else {
+      await db.query(
+        `UPDATE products
+         SET category_id = $1, name = $2, description = $3, price_inr = $4, image_url = $5, is_active = $6
+         WHERE id = $7`,
+        [categoryId, name, description, Math.round(priceInr), imageUrl, isActive, productId]
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (e) {

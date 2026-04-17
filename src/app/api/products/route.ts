@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb, type Product } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
+import { hasColumn } from "@/lib/db-schema";
 
 const BASE_QUERY = `
   SELECT
@@ -19,10 +20,21 @@ export async function GET(request: Request) {
       if (unauthorized) return unauthorized;
     }
     const db = getDb();
+    const hasAvailableSizes = await hasColumn("products", "available_sizes");
     const result = await db.query<Product>(
       includeInactive
-        ? `${BASE_QUERY} ORDER BY c.sort_order, p.created_at DESC`
-        : `${BASE_QUERY} WHERE p.is_active = true ORDER BY c.sort_order, p.created_at DESC`
+        ? `${BASE_QUERY.replace(
+            "p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at",
+            hasAvailableSizes
+              ? "p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at"
+              : "p.name, p.description, p.price_inr, p.image_url, ARRAY[]::text[] AS available_sizes, p.is_active, p.created_at"
+          )} ORDER BY c.sort_order, p.created_at DESC`
+        : `${BASE_QUERY.replace(
+            "p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at",
+            hasAvailableSizes
+              ? "p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at"
+              : "p.name, p.description, p.price_inr, p.image_url, ARRAY[]::text[] AS available_sizes, p.is_active, p.created_at"
+          )} WHERE p.is_active = true ORDER BY c.sort_order, p.created_at DESC`
     );
     return NextResponse.json(result.rows);
   } catch (e) {
@@ -52,18 +64,34 @@ export async function POST(request: Request) {
           .filter((size: string) => size.length > 0)
       : [];
     const isActive = Boolean(body.is_active ?? true);
+    const hasAvailableSizes = await hasColumn("products", "available_sizes");
 
     if (!Number.isInteger(categoryId) || !name || !Number.isFinite(priceInr)) {
       return NextResponse.json({ error: "Invalid product data" }, { status: 400 });
     }
 
     const db = getDb();
-    const result = await db.query(
-      `INSERT INTO products (category_id, name, description, price_inr, image_url, available_sizes, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id`,
-      [categoryId, name, description, Math.round(priceInr), imageUrl, availableSizes, isActive]
-    );
+    const result = hasAvailableSizes
+      ? await db.query(
+          `INSERT INTO products (category_id, name, description, price_inr, image_url, available_sizes, is_active)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           RETURNING id`,
+          [
+            categoryId,
+            name,
+            description,
+            Math.round(priceInr),
+            imageUrl,
+            availableSizes,
+            isActive,
+          ]
+        )
+      : await db.query(
+          `INSERT INTO products (category_id, name, description, price_inr, image_url, is_active)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           RETURNING id`,
+          [categoryId, name, description, Math.round(priceInr), imageUrl, isActive]
+        );
     return NextResponse.json({ success: true, id: result.rows[0]?.id });
   } catch (e) {
     console.error("POST /api/products", e);

@@ -4,12 +4,9 @@ function getConnectionString(): string | undefined {
   const privateUrl = process.env.DATABASE_URL;
   const publicUrl = process.env.DATABASE_PUBLIC_URL;
 
-  // Local development cannot resolve Railway private hostnames like *.railway.internal
-  if (process.env.NODE_ENV !== "production" && publicUrl) {
-    return publicUrl;
-  }
-
-  return privateUrl || publicUrl;
+  // Keep local + production pointed to the same configured source when public URL exists.
+  // This avoids data mismatch between environments.
+  return publicUrl || privateUrl;
 }
 
 function getPool(): Pool {
