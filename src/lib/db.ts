@@ -86,8 +86,8 @@ export const DEFAULT_SITE_SETTINGS: Omit<SiteSettings, "id" | "updated_at"> = {
   cta_secondary_label: "Browse Collection",
   first_drop_title: "First Drop — Avocado Tees",
   first_drop_note: "Made-to-order. Limited designs.",
-  instagram_handle: "@avacarto",
-  contact_email: "hello@avacarto.com",
+  instagram_handle: "@avocart",
+  contact_email: "hello@avocart.com",
 };
 
 export const PRODUCT_CATEGORY_SLUGS = {

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Avacarto – Avocado Is a Lifestyle.",
+  title: "Avocart – Avocado Is a Lifestyle.",
   description:
     "Soft tees, good vibes, and the fruit that started it all. Made-to-order. Limited designs.",
 };

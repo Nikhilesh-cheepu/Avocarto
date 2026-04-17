@@ -1,8 +1,8 @@
-# Avacarto
+# Avocart
 
 **Avocado Is a Lifestyle.**
 
-Pre-launch landing page and simple admin for Avacarto. Built with Next.js (App Router), TypeScript, and PostgreSQL on Railway.
+Pre-launch landing page and simple admin for Avocart. Built with Next.js (App Router), TypeScript, and PostgreSQL on Railway.
 
 ## Stack
 

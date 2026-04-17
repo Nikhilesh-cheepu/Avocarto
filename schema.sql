@@ -1,4 +1,4 @@
--- Avacarto Phase 1 schema (Railway Postgres)
+-- Avocart Phase 1 schema (Railway Postgres)
 -- Run this in Railway Postgres SQL console or via psql.
 
 -- Single row of editable landing page content
@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS site_settings (
   cta_secondary_label TEXT NOT NULL DEFAULT 'Browse Collection',
   first_drop_title TEXT NOT NULL DEFAULT 'First Drop – Avocado Tees',
   first_drop_note TEXT NOT NULL DEFAULT 'Made-to-order. Limited designs.',
-  instagram_handle TEXT NOT NULL DEFAULT '@avacarto',
-  contact_email TEXT NOT NULL DEFAULT 'hello@avacarto.com',
+  instagram_handle TEXT NOT NULL DEFAULT '@avocart',
+  contact_email TEXT NOT NULL DEFAULT 'hello@avocart.com',
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -30,8 +30,8 @@ INSERT INTO site_settings (
   'Browse Collection',
   'First Drop – Avocado Tees',
   'Made-to-order. Limited designs.',
-  '@avacarto',
-  'hello@avacarto.com'
+  '@avocart',
+  'hello@avocart.com'
 WHERE NOT EXISTS (SELECT 1 FROM site_settings LIMIT 1);
 
 -- Email subscribers (pre-launch signups)

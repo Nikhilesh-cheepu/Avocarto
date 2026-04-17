@@ -9,7 +9,7 @@ export function AboutSection() {
           Avocado-core, but premium.
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-[var(--foreground-muted)]">
-          Avacarto is cute lifestyle merch inspired by the fruit that started it
+          Avocart is cute lifestyle merch inspired by the fruit that started it
           all.
         </p>
         <p className="mt-1 text-sm leading-relaxed text-[var(--foreground-muted)]">

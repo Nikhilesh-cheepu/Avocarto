@@ -9,7 +9,7 @@ export function Header() {
             A
           </div>
           <span className="hidden font-semibold text-[var(--foreground)] sm:inline">
-            Avacarto
+            Avocart
           </span>
         </Link>
       </div>

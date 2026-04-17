@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const ADMIN_COOKIE = "avacarto_admin_session";
+const ADMIN_COOKIE = "avocart_admin_session";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "9703";
 
 export async function isAdminAuthenticated(): Promise<boolean> {

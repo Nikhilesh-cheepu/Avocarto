@@ -54,10 +54,7 @@ export default async function Home() {
       <main className="flex-1">
         <Storefront products={products} />
       </main>
-      <Footer
-        instagramHandle={settings.instagram_handle}
-        contactEmail={settings.contact_email}
-      />
+      <Footer />
     </div>
   );
 }

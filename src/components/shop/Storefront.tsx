@@ -67,7 +67,7 @@ export function Storefront({ products }: Props) {
 
   const message = encodeURIComponent(
     [
-      "Hi Avacarto! I want to place this order:",
+      "Hi Avocart! I want to place this order:",
       ...items.map(
         (i) => {
           const size = selectedSizes[i.product.id];
