@@ -1,7 +1,14 @@
 import { AdminPanel } from "@/components/AdminPanel";
 import Link from "next/link";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { redirect } from "next/navigation";
 
-export default function AdminPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminPage() {
+  const authed = await isAdminAuthenticated();
+  if (!authed) redirect("/admin/login");
+
   return (
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white px-4 sm:px-6 py-4">

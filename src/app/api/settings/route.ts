@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb, type SiteSettings, DEFAULT_SITE_SETTINGS } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,8 @@ const UPDATABLE_KEYS = [
 
 export async function PATCH(request: Request) {
   try {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
     const body = await request.json();
     const updates: Record<string, string> = {};
     for (const key of UPDATABLE_KEYS) {
@@ -66,7 +69,8 @@ export async function PATCH(request: Request) {
       .join(", ");
     const values = [...Object.values(updates), new Date()];
     const result = await db.query<SiteSettings>(
-      `UPDATE site_settings SET ${setClause}, updated_at = $${values.length} WHERE id = 1 RETURNING *`
+      `UPDATE site_settings SET ${setClause}, updated_at = $${values.length} WHERE id = 1 RETURNING *`,
+      values
     );
     const row = result.rows[0];
     if (!row) {

@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { getDb, type Subscriber } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const unauthorized = await requireAdmin();
+  if (unauthorized) return unauthorized;
   try {
     const db = getDb();
     const result = await db.query<Subscriber>(

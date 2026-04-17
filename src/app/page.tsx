@@ -1,12 +1,13 @@
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { AboutSection } from "@/components/AboutSection";
-import { FirstDrop } from "@/components/FirstDrop";
-import { WhatsComing } from "@/components/WhatsComing";
-import { SubscribeSection } from "@/components/SubscribeSection";
 import { Footer } from "@/components/Footer";
-import { getDb, DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/db";
+import {
+  getDb,
+  DEFAULT_SITE_SETTINGS,
+  type SiteSettings,
+  type Product,
+} from "@/lib/db";
+import { Storefront } from "@/components/shop/Storefront";
 
 async function getSettings(): Promise<{
   announcement_text: string;
@@ -44,25 +45,14 @@ async function getSettings(): Promise<{
 
 export default async function Home() {
   const settings = await getSettings();
+  const products = await getProducts();
 
   return (
     <div className="min-h-screen flex flex-col">
       <AnnouncementBar text={settings.announcement_text} />
       <Header />
       <main className="flex-1">
-        <Hero
-          headline={settings.hero_headline}
-          subtext={settings.hero_subtext}
-          ctaPrimary={settings.cta_primary_label}
-          ctaSecondary={settings.cta_secondary_label}
-        />
-        <FirstDrop
-          title={settings.first_drop_title}
-          note={settings.first_drop_note}
-        />
-        <WhatsComing />
-        <AboutSection />
-        <SubscribeSection />
+        <Storefront products={products} />
       </main>
       <Footer
         instagramHandle={settings.instagram_handle}
@@ -70,4 +60,22 @@ export default async function Home() {
       />
     </div>
   );
+}
+
+async function getProducts(): Promise<Product[]> {
+  try {
+    const db = getDb();
+    const result = await db.query<Product>(
+      `SELECT
+        p.id, p.category_id, c.slug AS category_slug, c.name AS category_name,
+        p.name, p.description, p.price_inr, p.image_url, p.available_sizes, p.is_active, p.created_at
+      FROM products p
+      JOIN product_categories c ON c.id = p.category_id
+      WHERE p.is_active = true
+      ORDER BY c.sort_order, p.created_at DESC`
+    );
+    return result.rows;
+  } catch {
+    return [];
+  }
 }
